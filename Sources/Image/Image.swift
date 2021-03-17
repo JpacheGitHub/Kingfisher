@@ -201,11 +201,21 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using: .png, properties: [:])
         #else
-            #if swift(>=4.2)
-            return base.pngData()
-            #else
-            return UIImagePNGRepresentation(base)
-            #endif
+            let imageMemorySize = base.size.width * base.size.height * 4;
+            if imageMemorySize + CGFloat(Memory.memoryUsage()) > Memory.memoryTotoalAvailable() {
+                NotificationCenter.default.post(name: UIImage.loadImageWillMemoryCrashNotification, object: nil, userInfo: ["memoryBoomImageURL":base.sourceImageURL?.absoluteString ?? ""])
+                #if swift(>=4.2)
+                return base.pngData()
+                #else
+                return UIImagePNGRepresentation(base)
+                #endif
+            }else {
+                #if swift(>=4.2)
+                return base.pngData()
+                #else
+                return UIImagePNGRepresentation(base)
+                #endif
+            }
         #endif
     }
 
@@ -221,11 +231,21 @@ extension KingfisherWrapper where Base: KFCrossPlatformImage {
             let rep = NSBitmapImageRep(cgImage: cgImage)
             return rep.representation(using:.jpeg, properties: [.compressionFactor: compressionQuality])
         #else
-            #if swift(>=4.2)
-            return base.jpegData(compressionQuality: compressionQuality)
-            #else
-            return UIImageJPEGRepresentation(base, compressionQuality)
-            #endif
+            let imageMemorySize = base.size.width * base.size.height * 4;
+            if imageMemorySize + CGFloat(Memory.memoryUsage()) > Memory.memoryTotoalAvailable() {
+                NotificationCenter.default.post(name: UIImage.loadImageWillMemoryCrashNotification, object: nil, userInfo: ["memoryBoomImageURL":base.sourceImageURL?.absoluteString ?? ""])
+                #if swift(>=4.2)
+                return base.jpegData(compressionQuality: compressionQuality)
+                #else
+                return UIImageJPEGRepresentation(base, compressionQuality)
+                #endif
+            }else {
+                #if swift(>=4.2)
+                return base.jpegData(compressionQuality: compressionQuality)
+                #else
+                return UIImageJPEGRepresentation(base, compressionQuality)
+                #endif
+            }
         #endif
     }
 

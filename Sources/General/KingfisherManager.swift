@@ -389,8 +389,11 @@ public class KingfisherManager {
                                            options.processor != DefaultImageProcessor.default
             let coordinator = CacheCallbackCoordinator(
                 shouldWaitForCache: options.waitForCache, shouldCacheOriginal: needToCacheOriginalImage)
+            let retrieveImage = options.imageModifier?.modify(value.image) ?? value.image
+            retrieveImage.sourceImageURL = source.url
+            
             let result = RetrieveImageResult(
-                image: options.imageModifier?.modify(value.image) ?? value.image,
+                image: retrieveImage,
                 cacheType: .none,
                 source: source,
                 originalSource: context.originalSource
@@ -522,6 +525,8 @@ public class KingfisherManager {
                         onSuccess: { cacheResult in
                             let value: Result<RetrieveImageResult, KingfisherError>
                             if let image = cacheResult.image {
+                                image.sourceImageURL = source.url
+                                print(image.sourceImageURL?.absoluteString)
                                 value = result.map {
                                     RetrieveImageResult(
                                         image: options.imageModifier?.modify(image) ?? image,
@@ -589,9 +594,11 @@ public class KingfisherManager {
 
                             let coordinator = CacheCallbackCoordinator(
                                 shouldWaitForCache: options.waitForCache, shouldCacheOriginal: false)
-
+                            
+                            let retrieveImage = options.imageModifier?.modify(processedImage) ?? processedImage
+                            retrieveImage.sourceImageURL = source.url
                             let result = RetrieveImageResult(
-                                image: options.imageModifier?.modify(processedImage) ?? processedImage,
+                                image: retrieveImage,
                                 cacheType: .none,
                                 source: source,
                                 originalSource: context.originalSource

@@ -84,6 +84,24 @@ extension KingfisherCompatibleValue {
 }
 
 extension KFCrossPlatformImage: KingfisherCompatible { }
+
+extension KFCrossPlatformImage {
+    var sourceImageURL: URL? {
+        set {
+            if let nv = newValue {
+                objc_setAssociatedObject(self, "com.dewu.memoryfix.sourceImageURL", nv, objc_AssociationPolicy.OBJC_ASSOCIATION_COPY_NONATOMIC)
+            }
+        }
+        
+        get {
+            if let rs = objc_getAssociatedObject(self, "com.dewu.memoryfix.sourceImageURL") as? URL {
+                return rs
+            }
+            return nil
+        }
+    }
+}
+
 #if !os(watchOS)
 extension KFCrossPlatformImageView: KingfisherCompatible { }
 extension KFCrossPlatformButton: KingfisherCompatible { }
